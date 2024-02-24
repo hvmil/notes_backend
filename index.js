@@ -2,67 +2,35 @@ require('dotenv').config()
 const express = require("express");
 const cors = require("cors")
 const mongoose = require("mongoose")
-const password = process.env.PASSWORD
-const url = `mongodb+srv://dimapanathamil:${password}@cluster0.9g7qg0i.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`
-
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-    content: String,
-    important: Boolean
-})
-
-const Note = mongoose.model('Note', noteSchema)
+const Note = require('./models/note')
 
 const app = express();
 app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json())
 
-
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy bitch",
-    important: true,
-  },
-  {
-    id: 2,
-    content: "Browser can execute only JavaScript",
-    important: false,
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true,
-  },
-];
-
-const generateId = () => {
-    let randomId = ''
-    for(let i = 0; i < 10; i++){
-        randomId += Math.floor(Math.random() * 10)
-    }
-    return randomId
-}
-
 app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
+  response.send("<h1>Notes Backend!</h1>");
 });
 
-app.get("/api/notes", (request, res) => {
+app.get("/api/notes", (req, res) => {
     Note.find({}).then(notes => {
         res.json(notes)
     })
 });
 app.get("/api/notes/:id", (req,res) => {
-    const id = Number(req.params.id)
-    if(!notes.some(note => note.id === id)){
-        res.status(404).send({error: "does not exist"})
-    }
-    const note = notes.find(note => note.id === id)
-    res.json(note)
+    Note.findById(req.params.id)
+        .then(note => {
+            if (note){
+                res.json(note)
+            }else{
+                res.status(404).end()
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(400).send({error: 'malformatted id'})
+        })
 })
 
 app.post("/api/notes/", (req,res) => {
@@ -73,24 +41,21 @@ app.post("/api/notes/", (req,res) => {
     if(notes.some(note => note.content === body.content)){
         return res.status(400).json({error:"this note already exists"})
     }
-    const newNote = {
-        id: generateId(),
+    const newNote = ({
         content: body.content,
-        important: Math.random() < 0.5
-    }
-    notes = notes.concat(newNote)
-    res.json(newNote)
+        important: body.important || false,
+    })
+
+    newNote.save().then(savedNote => {
+        res.json(savedNote)
+    }).catch(error => console.error(error))
 })
 app.delete("/api/notes/:id", (req,res) => {
-    const id = req.params.id
-    const initialLength = notes.length
-    notes = notes.filter(note => note.id !== id)
-
-    if(notes.length < initialLength){
-        res.status(204).end()
-    }else{
-        res.status(404).send({error:"note not found"})
-    }
+    Note.findById(req.params.id)
+        .then(result => {
+            res.status(204).end()
+        })
+        .catch(error => res.status(400).send({error: 'malformatted id'}))
 })
 
 const unknownEndpoint = (req,res) => {
@@ -98,7 +63,7 @@ const unknownEndpoint = (req,res) => {
 }
 app.use(unknownEndpoint)
 
-const PORT =  process.env.PORT || 3001;
+const PORT =  process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
