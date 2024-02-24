@@ -33,22 +33,27 @@ app.get("/api/notes/:id", (req,res) => {
         })
 })
 
-app.post("/api/notes/", (req,res) => {
+app.post("/api/notes/", async(req,res) => {
     const body = req.body
     if(!body.content){
         return res.status(400).json({error: "note content missing"})
     }
-    if(notes.some(note => note.content === body.content)){
-        return res.status(400).json({error:"this note already exists"})
-    }
-    const newNote = ({
-        content: body.content,
-        important: body.important || false,
-    })
-
-    newNote.save().then(savedNote => {
+    try{
+        const exists = await Note.findOne({content: body.content})
+        if(exists){
+            return res.status(400).json({error: "This note already exists"})
+        }
+        const newNote = new Note({
+            content: body.content,
+            important: body.important || false,
+        })
+        const savedNote = await newNote.save()
         res.json(savedNote)
-    }).catch(error => console.error(error))
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({error: "an error occured while saving the note"})
+    } 
 })
 app.delete("/api/notes/:id", (req,res) => {
     Note.findById(req.params.id)
