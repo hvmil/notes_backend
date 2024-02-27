@@ -2,9 +2,24 @@ POST http://localhost:3001/api/notes/
 Content-Type: application/json
 
 {
-    "content": "Mongodb Test",
+    "content": "lol",
     "important": true
 }
 
 ###
-GET http://localhost:3001/api/notes/
+GET http://localhost:3001/api/notes/dafas
+
+###
+PUT http://localhost:3001/api/notes/65d9f767a2ca36009a5679d9
+Content-Type: application/json
+
+{
+    "important": true,
+    "content": "LOL"
+}
+
+###
+DELETE https://express-phonebook-cool-dust-4054.fly.dev/api/persons/65da1a72b57ad45f75ebe5cd
+
+### 
+DELETE http://localhost:3001/api/notes/65d82d481e4d48fc3f2a722a

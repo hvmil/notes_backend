@@ -1,7 +1,4 @@
-// require('dotenv').config({path: '../.env'})
-const password = process.env.DB_PASSWORD
-const uriTemplate = process.env.MONGODB_URI
-const mongoUri = uriTemplate.replace('DB_PASSWORD', password)
+const mongoUri = process.env.MONGODB_URI
 const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
@@ -17,7 +14,11 @@ mongoose.connect(mongoUri)
   })
 
 const noteSchema = new mongoose.Schema({
-  content: String,
+  content: {
+    type: String,
+    minLength: 5,
+    required: true
+  },
   important: Boolean,
 })
 
