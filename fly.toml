@@ -1,18 +1,15 @@
-# fly.toml app configuration file generated for notes-backend-hamil on 2024-02-22T18:32:52-05:00
+# fly.toml app configuration file generated for hamils-noteapp on 2024-03-25T01:05:19-04:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'notes-backend-hamil'
+app = 'hamils-noteapp'
 primary_region = 'ewr'
 
 [build]
 
-[env]
-  PORT = "3001"
-
 [http_service]
-  internal_port = 3001
+  internal_port = 3000
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true

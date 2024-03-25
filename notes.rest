@@ -7,7 +7,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3001/api/notes/dafas
+GET http://localhost:3001/api/notes/
 
 ###
 PUT http://localhost:3001/api/notes/65d9f767a2ca36009a5679d9

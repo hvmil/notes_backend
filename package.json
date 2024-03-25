@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env NODE_ENV=test node --test",
     "build:ui": "rm -rf dist && cd /Users/hamildimapanat/Desktop/fso_part1 && npm run build && cp -r dist /Users/hamildimapanat/Desktop/notes_backend",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
@@ -26,7 +26,8 @@
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.2",
     "@stylistic/eslint-plugin-js": "^1.6.2",
-    "eslint": "^8.57.0",
-    "nodemon": "^3.1.0"
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.0",
+    "supertest": "^6.3.4"
   }
 }
