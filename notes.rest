@@ -23,3 +23,26 @@ DELETE https://express-phonebook-cool-dust-4054.fly.dev/api/persons/65da1a72b57a
 
 ### 
 DELETE http://localhost:3001/api/notes/65d82d481e4d48fc3f2a722a
+
+###
+GET http://localhost:3001/api/users/
+
+###
+POST http://localhost:3001/api/users/
+Content-Type: application/json
+
+{
+    "username": "test",
+    "name": "Hamil",
+    "password": "test123"
+}
+###
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "User if of the note creator is at the start sent along the request",
+    "important": true,
+    "userId": "6602dee743bb9029aea68310"
+
+}
