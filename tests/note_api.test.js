@@ -11,9 +11,19 @@ const helper = require("./test_helper");
 
 const Note = require("../models/note");
 
+let userSetupDone = false
+
 describe("when there is initially some notes saved", () => {
   beforeEach(async () => {
     await Note.deleteMany({});
+    if(!userSetupDone){
+      await User.deleteMany({})
+      const passwordHash = await bcrypt.hash('testPass', 10)
+      const user = new User({username: 'testUser', name:'Test User', passwordHash})
+      await user.save()
+      userSetupDone = true
+      console.log("Logged In");
+    }
     await Note.insertMany(helper.initialNotes);
   });
 
@@ -64,7 +74,21 @@ describe("when there is initially some notes saved", () => {
     });
   });
 
+  // LOGGING IN 
+
+  const loginUser = async() => {
+    const response = await api.post('/api/login').send({username: 'testUser', password: 'testPass'})
+    return response.body.token
+  }
+
   describe("addition of a new note", () => {
+    let token;
+
+    beforeEach(async() => {
+      if(!token){
+        token = await loginUser()
+      }
+    })
     test("succeeds with valid data", async () => {
       const newNote = {
         content: "async/await simplifies making async calls",
@@ -73,6 +97,7 @@ describe("when there is initially some notes saved", () => {
 
       await api
         .post("/api/notes")
+        .set('Authorization', `Bearer ${token}`)
         .send(newNote)
         .expect(201)
         .expect("Content-Type", /application\/json/);
@@ -89,7 +114,7 @@ describe("when there is initially some notes saved", () => {
         important: true,
       };
 
-      await api.post("/api/notes").send(newNote).expect(400);
+      await api.post("/api/notes").set('Authorization', `Bearer ${token}`).send(newNote).expect(400);
 
       const notesAtEnd = await helper.notesInDb();
 

@@ -32,17 +32,33 @@ POST http://localhost:3001/api/users/
 Content-Type: application/json
 
 {
-    "username": "test",
-    "name": "Hamil",
-    "password": "test123"
+    "username": "test_user",
+    "name": "John",
+    "password": "test_user1"
+}
+###
+POST http://localhost:3001/api/users/
+Content-Type: application/json
+
+{
+    "username": "test_user2",
+    "name": "James",
+    "password": "test_user2"
 }
 ###
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RfdXNlcjIiLCJpZCI6IjY2MDMzY2E5YTRlYWVkZDZkZjNjZTg3YSIsImlhdCI6MTcxMTQ4ODE4NX0.wLGGdWGRNFdjluCrvNQw1zwTEPwSwF2e2lzqQPFp-sg
 
 {
-    "content": "User if of the note creator is at the start sent along the request",
-    "important": true,
-    "userId": "6602dee743bb9029aea68310"
+    "content": "No Token POST",
+    "important": true
+}
+### 
+POST http://localhost:3001/api/login
+Content-Type: application/json
 
+{
+    "username": "test_user2",
+    "password": "test_user2"
 }
